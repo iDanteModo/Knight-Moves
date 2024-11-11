@@ -14,8 +14,43 @@ class Graph {
         for(let i = 0; i < 64; i++) {
             this.addNode(i);
         }
-        for(let j = 0; j < 63; j++) {
-            this.addEdge(j, j+1);
+        // for(let j = 0; j < 63; j++) {
+        //     this.addEdge(j, j+1);
+        // }
+        let exclude = []
+        for( let k = 0; k < 64; k++) {
+            // Rules for the first 2 rows 0, 8
+            if(k + 17 < 64 && k % 8 === 0 && k < 9){
+                this.addEdge(k, k + 10);
+                this.addEdge(k, k + 17);
+            }else if(k + 17 < 64 && k % 8 === 0 && k >8){
+                this.addEdge(k, k + 10);
+                this.addEdge(k, k + 17);
+            }else if (k - 17 >= 0 && k % 8 === 0 && k > 8){
+                this.addEdge(k, k - 6);
+                this.addEdge(k, k - 15);
+            }else if(k + 17 < 64 && k % 8 === 7 && k < 16) {
+                this.addEdge(k, k + 6);
+                this.addEdge(k ,k + 15);
+            }else if (k + 17 < 64 && k % 8 === 7 && k > 16) {
+                this.addEdge(k, k + 6);
+                this.addEdge(k ,k + 15);
+            }
+            // if(k + 17 < 64 && k % 8 === 0) {
+            //     this.addEdge(k, k + 17);
+            //     this.addEdge(k, k + 10);
+            // }else if( k + 17 < 64) {
+            //     this.addEdge(k, k + 17);
+            //     this.addEdge(k, k + 15);
+            //     this.addEdge(k, k + 10);
+            //     this.addEdge(k, k + 6);
+            // }else if(k - 17 >= 0) {
+            //     this.addEdge(k, k - 17);
+            //     this.addEdge(k, k - 15);
+            //     this.addEdge(k, k - 10);
+            //     this.addEdge(k, k - 6);
+            // }
+            
         }
         // console.log(this.adjacencyList);
     }
@@ -38,7 +73,6 @@ class Graph {
 
 const list = new Graph();
 list.createChessBoard();
-// list.getNeighbours(1);
 console.log(list);
 // console.log(list);
 
