@@ -1,95 +1,78 @@
-class Graph {
-    adjacencyList;
-    constructor() {
-        this.adjacencyList = new Map();
-    }
-    addNode(node) {
-        this.adjacencyList.set(node, new Set());
-    }
-    addEdge(node1, node2) {
-        this.adjacencyList.get(node1).add(node2);
-        this.adjacencyList.get(node2).add(node1); // remove this line for directed graph
-    }
-    createChessBoard() {
-        for(let i = 0; i < 64; i++) {
-            this.addNode(i);
-        }
-        // for(let j = 0; j < 63; j++) {
-        //     this.addEdge(j, j+1);
-        // }
-        let exclude = []
-        for( let k = 0; k < 64; k++) {
-            // Rules for the first 2 rows 0, 8
-            if(k + 17 < 64 && k % 8 === 0 && k < 9){
-                this.addEdge(k, k + 10);
-                this.addEdge(k, k + 17);
-            }else if(k + 17 < 64 && k % 8 === 0 && k >8){
-                this.addEdge(k, k + 10);
-                this.addEdge(k, k + 17);
-            }else if (k - 17 >= 0 && k % 8 === 0 && k > 8){
-                this.addEdge(k, k - 6);
-                this.addEdge(k, k - 15);
-            }else if(k + 17 < 64 && k % 8 === 7 && k < 16) {
-                this.addEdge(k, k + 6);
-                this.addEdge(k ,k + 15);
-            }else if (k + 17 < 64 && k % 8 === 7 && k > 16) {
-                this.addEdge(k, k + 6);
-                this.addEdge(k ,k + 15);
-            }
-            // if(k + 17 < 64 && k % 8 === 0) {
-            //     this.addEdge(k, k + 17);
-            //     this.addEdge(k, k + 10);
-            // }else if( k + 17 < 64) {
-            //     this.addEdge(k, k + 17);
-            //     this.addEdge(k, k + 15);
-            //     this.addEdge(k, k + 10);
-            //     this.addEdge(k, k + 6);
-            // }else if(k - 17 >= 0) {
-            //     this.addEdge(k, k - 17);
-            //     this.addEdge(k, k - 15);
-            //     this.addEdge(k, k - 10);
-            //     this.addEdge(k, k - 6);
-            // }
-            
-        }
-        // console.log(this.adjacencyList);
-    }
-    getNeighbours(node) {
-        console.log(this.adjacencyList.get(node));
-        return this.adjacencyList.get(node);
-    }
-    hasEdge(node1, node2) {
-        return this.adjacencyList.get(node1).has(node2);
-    }
+// Javascript program to find minimum steps to reach to
+// specific cell in minimum moves by Knight
+
+// Class for storing a cell's data
+class cell {
+  constructor(x, y, dis) {
+    this.x = x;
+    this.y = y;
+    this.dis = dis;
+  }
 }
 
-// For the knight pattern from node i to i +17 ori i +15 or i +10 or i + 6 / i -17 or i - 15 or i - 10 or i - 6 
+// Utility method returns true if (x, y) lies
+// inside Board
+function isInside(x, y, N = 8) {
+  if (x >= 1 && x <= N && y >= 1 && y <= N) return true;
+  return false;
+}
 
-// function generateEdges(graph) {
-//     for(let i = 0; i < 63; i++) {
-//         graph.addEdge(i, i +1);
-//     }
-// }
+// Method returns minimum step
+// to reach target position
+function minStepToReachTarget(knightPos, targetPos, N = 8) {
+  // x and y direction, where a knight can move
+  let dx = [-2, -1, 1, 2, -2, -1, 1, 2];
+  let dy = [-1, -2, -2, -1, 1, 2, 2, 1];
 
-const list = new Graph();
-list.createChessBoard();
-console.log(list);
-// console.log(list);
+  // queue for storing states of knight in board
+  let q = [];
+
+  // push starting position of knight with 0 distance
+  q.push(new cell(knightPos[0], knightPos[1], 0));
+
+  let t;
+  let x, y;
+  let visit = new Array(N + 1);
+
+  // make all cell unvisited
+  for (let i = 1; i <= N; i++) {
+    visit[i] = new Array(N + 1);
+    for (let j = 1; j <= N; j++) visit[i][j] = false;
+  }
+
+  // visit starting state
+  visit[knightPos[0]][knightPos[1]] = true;
+
+  // loop until we have one element in queue
+  while (q.length != 0) {
+    t = q.shift();
+
+    // if current cell is equal to target cell,
+    // return its distance
+    if (t.x == targetPos[0] && t.y == targetPos[1]) return t.dis;
+
+    // loop for all reachable states
+    for (let i = 0; i < 8; i++) {
+      x = t.x + dx[i];
+      y = t.y + dy[i];
+
+      // If reachable state is not yet visited and
+      // inside board, push that state into queue
+      if (isInside(x, y, N) && !visit[x][y]) {
+        visit[x][y] = true;
+        q.push(new cell(x, y, t.dis + 1));
+      }
+    }
+  }
+  return Number.MAX_VALUE;
+}
+
+// Driver code
+// let N = 8; Modify the number of squares, implicit is 8 x 8 
+// Counting on my board starts from 1 and finishes to 8
+let knightPos = [1, 1];
+let targetPos = [2, 1];
+document.getElementById("output").innerText = minStepToReachTarget(knightPos, targetPos);
+console.log(minStepToReachTarget(knightPos, targetPos));
 
 
-
-
-
-
-
-
-
-
-// console.log(list.adjacencyList);
-// console.log(list.adjacencyList.entries().next().value); // acess first item from map
-// console.log([...list.adjacencyList.entries()][1]); // acess by index
-// const secondSet = [...list.adjacencyList.entries()][1];
-// const setValues = [...secondSet[1]];
-// const showValue = setValues[0];
-// console.log(setValues);
-// console.log(showValue);
